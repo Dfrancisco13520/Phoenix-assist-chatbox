@@ -1,0 +1,290 @@
+Phoenix Assist Chatbot
+
+Overview
+
+Phoenix Assist is a chatbot designed to help individuals in Arizona navigate social services, including SSI applications, health insurance disputes, sober living housing, and permanent housing options. The chatbot provides step-by-step guidance, resource lists, and automated document generation.
+
+Features
+
+✅ Step-by-step guidance for SSI, housing, and insurance disputes.
+✅ Arizona-specific resources (list of sober living homes, legal aid, financial aid).
+✅ Pre-written template generator for letters (dispute letters, appeals, applications).
+✅ User-friendly interface (text-based chatbot, expandable to voice).
+
+Tech Stack
+
+Backend: Python (FastAPI, Flask)
+
+AI Model: OpenAI API, LangChain, Rasa (for custom NLP)
+
+Database: Firebase, PostgreSQL (if storing resources)
+
+Frontend: React (for a web app), Telegram/Discord bot (for chat)
+
+
+Setup Instructions
+
+1. Clone the repository
+
+git clone https://github.com/YOUR_GITHUB_USERNAME/Phoenix-Assist-Chatbot.git
+cd Phoenix-Assist-Chatbot
+
+
+2. Create a virtual environment and install dependencies
+
+python -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+pip install openai fastapi uvicorn python-dotenv python-telegram-bot
+
+
+3. Run the chatbot API locally
+
+uvicorn chatbot:app --reload
+
+
+
+chatbot.py (Initial API Code)
+
+Create a chatbot.py file and add the following:
+
+from fastapi import FastAPI
+import openai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app = FastAPI()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+@app.get("/chat")
+def chat(query: str):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": query}]
+    )
+    return {"response": response["choices"][0]["message"]["content"]}
+
+telegram_bot.py (Telegram Integration)
+
+Create a telegram_bot.py file and add the following:
+
+import os
+import openai
+from dotenv import load_dotenv
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
+import requests
+
+load_dotenv()
+
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+CHATBOT_API_URL = "http://127.0.0.1:8000/chat"
+
+app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
+
+async def start(update: Update, context: CallbackContext):
+    await update.message.reply_text("Hello! I am Phoenix Assist. Ask me about SSI, housing, or health insurance.")
+
+async def handle_message(update: Update, context: CallbackContext):
+    user_message = update.message.text
+    response = requests.get(CHATBOT_API_URL, params={"query": user_message})
+    bot_response = response.json().get("response", "I'm not sure how to help with that.")
+    await update.message.reply_text(bot_response)
+
+app.add_handler(CommandHandler("start", start))
+ap.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+if __name__ == "__main__":
+    print("Bot is running...")
+    app.run_polling()
+
+Running the Telegram Bot
+
+1. Set up your .env file
+
+OPENAI_API_KEY=your_openai_api_key_here
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
+
+
+2. Run the chatbot API first
+
+uvicorn chatbot:app --reload
+
+
+3. Start the Telegram bot
+
+python telegram_bot.py
+
+
+4. Test your bot in Telegram by messaging it!
+
+
+
+Roadmap
+
+[x] Create an initial chatbot script using OpenAI API
+
+[x] Integrate Arizona-specific resources
+
+[ ] Develop a simple web-based UI
+
+[ ] Add document generation for appeals and disputes
+
+[x] Integrate with Telegram bot
+
+
+Contributing
+
+Contributions are welcome! Open an issue or submit a pull request to discuss improvements.
+
+License
+
+MIT License
+
+Phoenix Assist Chatbot
+
+Overview
+
+Phoenix Assist is a chatbot designed to help individuals in Arizona navigate social services, including SSI applications, health insurance disputes, sober living housing, and permanent housing options. The chatbot provides step-by-step guidance, resource lists, and automated document generation.
+
+Features
+
+✅ Step-by-step guidance for SSI, housing, and insurance disputes.
+✅ Arizona-specific resources (list of sober living homes, legal aid, financial aid).
+✅ Pre-written template generator for letters (dispute letters, appeals, applications).
+✅ User-friendly interface (text-based chatbot, expandable to voice).
+
+Tech Stack
+
+Backend: Python (FastAPI, Flask)
+
+AI Model: OpenAI API, LangChain, Rasa (for custom NLP)
+
+Database: Firebase, PostgreSQL (if storing resources)
+
+Frontend: React (for a web app), Telegram/Discord bot (for chat)
+
+
+Setup Instructions
+
+1. Clone the repository
+
+git clone https://github.com/YOUR_GITHUB_USERNAME/Phoenix-Assist-Chatbot.git
+cd Phoenix-Assist-Chatbot
+
+
+2. Create a virtual environment and install dependencies
+
+python -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+pip install openai fastapi uvicorn python-dotenv python-telegram-bot
+
+
+3. Run the chatbot API locally
+
+uvicorn chatbot:app --reload
+
+
+
+chatbot.py (Initial API Code)
+
+Create a chatbot.py file and add the following:
+
+from fastapi import FastAPI
+import openai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app = FastAPI()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+@app.get("/chat")
+def chat(query: str):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": query}]
+    )
+    return {"response": response["choices"][0]["message"]["content"]}
+
+telegram_bot.py (Telegram Integration)
+
+Create a telegram_bot.py file and add the following:
+
+import os
+import openai
+from dotenv import load_dotenv
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
+import requests
+
+load_dotenv()
+
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+CHATBOT_API_URL = "http://127.0.0.1:8000/chat"
+
+app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
+
+async def start(update: Update, context: CallbackContext):
+    await update.message.reply_text("Hello! I am Phoenix Assist. Ask me about SSI, housing, or health insurance.")
+
+async def handle_message(update: Update, context: CallbackContext):
+    user_message = update.message.text
+    response = requests.get(CHATBOT_API_URL, params={"query": user_message})
+    bot_response = response.json().get("response", "I'm not sure how to help with that.")
+    await update.message.reply_text(bot_response)
+
+app.add_handler(CommandHandler("start", start))
+ap.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+if __name__ == "__main__":
+    print("Bot is running...")
+    app.run_polling()
+
+Running the Telegram Bot
+
+1. Set up your .env file
+
+OPENAI_API_KEY=your_openai_api_key_here
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
+
+
+2. Run the chatbot API first
+
+uvicorn chatbot:app --reload
+
+
+3. Start the Telegram bot
+
+python telegram_bot.py
+
+
+4. Test your bot in Telegram by messaging it!
+
+
+
+Roadmap
+
+[x] Create an initial chatbot script using OpenAI API
+
+[x] Integrate Arizona-specific resources
+
+[ ] Develop a simple web-based UI
+
+[ ] Add document generation for appeals and disputes
+
+[x] Integrate with Telegram bot
+
+
+Contributing
+
+Contributions are welcome! Open an issue or submit a pull request to discuss improvements.
+
+License
+
+MIT License
+
